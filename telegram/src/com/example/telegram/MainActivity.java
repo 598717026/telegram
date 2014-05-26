@@ -10,12 +10,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
 
 	private Button mButton;
+	boolean mTouchDown = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,4 +88,51 @@ public class MainActivity extends Activity {
 			}
 		});
 	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event)
+	{
+		int p = event.findPointerIndex(0);
+		float x = event.getX(p);
+		float y = event.getY(p);
+		
+		switch (event.getAction())
+		{
+		case MotionEvent.ACTION_DOWN:
+			mTouchDown = true;
+			break;
+		case MotionEvent.ACTION_UP:
+			mTouchDown = false;
+			break;
+		default:
+			break;
+		}
+		return super.onTouchEvent(event);
+	}
+	
+	public void ControlThread()
+	{
+		final Runnable audioRun = new Runnable() {
+			public void run() {
+				while (true) {
+
+					if (false == mTouchDown)
+					{
+						
+					}
+					else
+					{
+						
+					}
+					
+		            try {  
+		                Thread.sleep(100);  
+		            } catch (Exception e) {  
+		                e.printStackTrace();  
+		            }  
+		        }  
+			}
+			};
+	}
+
 }
