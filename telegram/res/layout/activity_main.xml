@@ -1,6 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@id/buttonpcm"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}" >
@@ -11,14 +10,6 @@
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
 
-    <Button
-        android:id="@+id/buttonpcm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
-        android:layout_marginLeft="36dp"
-        android:layout_marginTop="94dp"
-        android:text="start pcm" />
+
 
 </RelativeLayout>
