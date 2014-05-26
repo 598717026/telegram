@@ -67,6 +67,19 @@ public class MyAudioTrack {
 		}
 	}
 
+	public void playAudioTrack(short[] data, int offset, int length) {
+		if (data == null || data.length == 0) {
+			return;
+		}
+
+		try {
+			mAudioTrack.write(data, offset, length);
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.i("MyAudioTrack", "catch exception...");
+		}
+	}
+
 	public int getPrimePlaySize() {
 		int minBufSize = AudioTrack.getMinBufferSize(mFrequency, mChannel,
 				mSampBit);
