@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		ControlThread();
+//		ControlThread();
 		
 		/*mButton = (Button) findViewById(R.id.buttonpcm);
 		mButton.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +100,84 @@ public class MainActivity extends Activity {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			mTouchDown = true;
+			
+			MyAudioTrack maudiotrack = new MyAudioTrack(40960,
+					AudioFormat.CHANNEL_CONFIGURATION_STEREO,
+					AudioFormat.ENCODING_PCM_16BIT);
+			maudiotrack.init();
+/*			short[] data = new short[44100];
+
+			byte[] buffer = null;
+			int length = 0;
+			String fileName = "/sdcard/radio.pcm";
+
+			// 也可以用String fileName = "mnt/sdcard/Y.txt";
+
+			String res = "";
+
+			try {
+
+				FileInputStream fin = new FileInputStream(fileName);
+
+				// FileInputStream fin = openFileInput(fileName);
+
+				// 用这个就不行了，必须用FileInputStream
+
+				length = fin.available();
+
+				buffer = new byte[length];
+
+				fin.read(buffer);
+
+				fin.close();
+
+			} catch (Exception e) {
+
+				e.printStackTrace();
+
+			}*/
+			
+
+			short[] buffer = new short[40960 * 2];
+			Complex[] x1 = new Complex[4096];
+
+			for (int i  = 0;i < 4096;i++)
+			{
+				x1[i] = new Complex(0, 0);
+			}
+			
+
+			x1[84] = new Complex(1000000, 0);
+
+			Complex[] y1 = FFT.ifft(x1);
+			
+			for (int i  = 0;i < 40960;i++)
+			{
+				buffer[i * 2] = (short) y1[i % 4096].re();
+				buffer[i * 2 + 1] = (short) y1[i % 4096].re();
+			}
+			
+			int length = 40960 * 2;
+
+			
+			maudiotrack.playAudioTrack(buffer, 0, length);
+			Log.i("maudiotrack", "playAudioTrack(data, 0, 5120)");
+			new AlertDialog.Builder(MainActivity.this)
+					.setMessage("这是第二个提示")
+					.setPositiveButton("确定",
+							new DialogInterface.OnClickListener() {
+								public void onClick(
+										DialogInterface dialoginterface,
+										int i) {
+									// 按钮事件
+								}
+							}).show();
+
+			maudiotrack.release();
+			buffer = null;
+
+
+			
 			break;
 		case MotionEvent.ACTION_UP:
 			mTouchDown = false;
