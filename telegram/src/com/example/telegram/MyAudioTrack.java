@@ -12,7 +12,7 @@ public class MyAudioTrack {
 
 	int mSampBit; // 采样精度
 
-	AudioTrack mAudioTrack;
+	AudioTrack mAudioTrack = null;
 
 	public MyAudioTrack(int frequency, int channel, int sampbit) {
 		mFrequency = frequency;
