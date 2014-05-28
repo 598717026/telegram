@@ -41,11 +41,20 @@ public class TeleGramMachine {
 				AudioFormat.ENCODING_PCM_16BIT, minBufSize,
 				AudioTrack.MODE_STREAM);
 
+		mAudioTrack.setStereoVolume(0.1f, 0.1f);
 	}
 
 	public void releaseAudio() {
 		mAudioTrack.stop();
 		mAudioTrack.release();
+	}
+
+	public void playAudio() {
+		mAudioTrack.play();
+	}
+
+	public void pauseAudio() {
+		mAudioTrack.pause();
 	}
 
 	public void writepcmAudio() {
@@ -97,6 +106,7 @@ public class TeleGramMachine {
 				TeleGramMachine.this.writepcmAudio();
 			}
 		}
-
 	}
+	
+
 }
