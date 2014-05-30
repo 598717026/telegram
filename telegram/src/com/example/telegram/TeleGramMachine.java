@@ -1,16 +1,21 @@
 package com.example.telegram;
 
+import java.util.Calendar;
+
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.util.Log;
 
 public class TeleGramMachine {
 
 	public AudioTrack mAudioTrack = null;
 	private short[] mPCMData = null;
+	
+	private boolean mPlayflag = false;
 
 	int FFTN = 4096;
-	int TGFN = 84;
+	int TGFN = 86;
 	int AUDIOF = FFTN * 10;
 
 	public TeleGramMachine() {
@@ -19,11 +24,13 @@ public class TeleGramMachine {
 	}
 
 	public void keydown() {
-		mAudioTrack.play();
+		mPlayflag = true;
+//		playAudio();
 	}
 
 	public void keyup() {
-		mAudioTrack.pause();
+		mPlayflag = false;
+//		pauseAudio();
 	}
 
 	public void initAudio() {
@@ -41,7 +48,8 @@ public class TeleGramMachine {
 				AudioFormat.ENCODING_PCM_16BIT, minBufSize,
 				AudioTrack.MODE_STREAM);
 
-		mAudioTrack.setStereoVolume(0.1f, 0.1f);
+		mAudioTrack.setStereoVolume(1f, 1f);
+		playAudio();
 	}
 
 	public void releaseAudio() {
@@ -50,10 +58,13 @@ public class TeleGramMachine {
 	}
 
 	public void playAudio() {
+		
+		Log.i("TeleGramMachine", "play:" + Calendar.getInstance().getTimeInMillis());
 		mAudioTrack.play();
 	}
 
 	public void pauseAudio() {
+		Log.i("TeleGramMachine", "pause:" + Calendar.getInstance().getTimeInMillis());
 		mAudioTrack.pause();
 	}
 
@@ -64,7 +75,7 @@ public class TeleGramMachine {
 
 	private void CreatePCM() {
 
-		mPCMData = new short[FFTN * 2];
+		mPCMData = new short[FFTN / 2];
 		Complex[] x = new Complex[FFTN];
 
 		for (int i = 0; i < FFTN; i++) {
@@ -72,11 +83,10 @@ public class TeleGramMachine {
 		}
 
 		x[TGFN] = new Complex(10000 * FFTN, 0);
-		x[TGFN - 2] = new Complex(3000 * FFTN, 0);
 
 		Complex[] y = FFT.ifft(x);
 
-		for (int i = 0; i < FFTN; i++) {
+		for (int i = 0; i < mPCMData.length / 2; i++) {
 			mPCMData[i * 2] = (short) y[i].re();
 			mPCMData[i * 2 + 1] = (short) y[i].re();
 		}
@@ -103,7 +113,53 @@ public class TeleGramMachine {
 
 			TeleGramMachine.this.initAudio();
 			while (true) {
-				TeleGramMachine.this.writepcmAudio();
+
+				if (mPlayflag == true)
+				{
+					TeleGramMachine.this.writepcmAudio();
+				}
+				
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	class AudioControlThread extends Thread {
+		short[] mAudiobuffer;
+
+		AudioControlThread() {
+			mAudiobuffer = mPCMData;
+		}
+
+		@Override
+		public void destroy() {
+			// TODO Auto-generated method stub
+			TeleGramMachine.this.releaseAudio();
+			super.destroy();
+		}
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+
+			TeleGramMachine.this.initAudio();
+			while (true) {
+				if (mPlayflag == true)
+				{
+					TeleGramMachine.this.writepcmAudio();
+				}
+				
+				try {
+					Thread.sleep(9);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
