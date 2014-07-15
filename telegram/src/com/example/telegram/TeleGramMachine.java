@@ -75,7 +75,7 @@ public class TeleGramMachine {
 
 	private void CreatePCM() {
 
-		mPCMData = new short[FFTN / 2];
+		mPCMData = new short[FFTN];
 		Complex[] x = new Complex[FFTN];
 
 		for (int i = 0; i < FFTN; i++) {
@@ -110,17 +110,29 @@ public class TeleGramMachine {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
+			
+			int runticks = 0;
 
 			TeleGramMachine.this.initAudio();
 			while (true) {
 
 				if (mPlayflag == true)
 				{
-					TeleGramMachine.this.writepcmAudio();
+					if (runticks % 2 == 0)
+					{
+						mAudioTrack.setStereoVolume(1, 1);
+						TeleGramMachine.this.writepcmAudio();
+					}
+					runticks++;
+				}
+				else
+				{
+					mAudioTrack.setStereoVolume(0, 0);
+					runticks = 0;
 				}
 				
 				try {
-					Thread.sleep(20);
+					Thread.sleep(10);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
